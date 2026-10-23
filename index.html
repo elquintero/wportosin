@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#2f5d9f">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -32,6 +32,7 @@ nav.menu a{text-decoration:none;text-transform:uppercase;letter-spacing:.12em;fo
 nav.menu a:hover,nav.menu a.on{border-color:var(--blue);color:var(--blue)}
 .ic{border:0;background:none;cursor:pointer;color:var(--blue-d);width:42px;height:42px;display:grid;place-items:center;border-radius:50%}.ic:hover{background:var(--blue-l)}
 .ic svg{width:24px;height:24px}.burger{display:none}
+.gear[hidden]{display:none}#foot img{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .gear.on{color:#fff;background:var(--blue)}
 @media(max-width:760px){
  .burger{display:grid;margin-left:auto}
@@ -182,8 +183,7 @@ function route(){let h=(location.hash||'#inicio').slice(1),r=['inicio','carta','
  $('#nav').classList.remove('open');
  if(h==='nosotros'){const e=$('#nosotros');e&&e.scrollIntoView()}else if(!route.keep)window.scrollTo(0,0);
  $('#foot').innerHTML=`<img src="logo-white.png" alt="Portosín"><div>© Cafetería Portosín ${new Date().getFullYear()}</div>`;
- $('#admbar').innerHTML=isAdmin()?`<div class="adm">Modo administrador · <button id="ed">Editar contenido</button></div>`:'';
- $('#gear').classList.toggle('on',isAdmin());
+  $('#gear').classList.toggle('on',isAdmin());$('#gear').hidden=!(isAdmin()||sessionStorage.getItem('pt_gear')==='1');
 }
 function repaint(){route.keep=true;route();route.keep=false}
 /* ---------- Persistencia: data.json en GitHub (API Contents) ---------- */
@@ -252,7 +252,7 @@ dlg.addEventListener('click',async e=>{const t=e.target;
  if(t.dataset.up){up=t.dataset.up;$('#file').value='';return $('#file').click()}
  if(t.id==='addg'){$('#files').value='';return $('#files').click()}
  if(t.dataset.g){const a=S.galeria.items,i=+t.dataset.i,k=t.dataset.g;if(k==='d'){if(!confirm('¿Quitar esta foto de la galería?'))return;a.splice(i,1)}else{const j=k==='l'?i-1:i+1;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]]}save();repaint();return openDlg()}
- if(t.id==='c-out'){cfg.token='';cfg.ok=false;LS.setItem('pt_cfg',JSON.stringify(cfg));tab='con';repaint();return openDlg()}
+ if(t.id==='c-out'){cfg.token='';cfg.ok=false;sessionStorage.removeItem('pt_gear');LS.setItem('pt_cfg',JSON.stringify(cfg));repaint();return dlg.close()}
  if(t.id==='c-ok'){cfg.repo=$('#c-r').value.trim();cfg.token=$('#c-t').value.trim();cfg.ok=false;setSt('Comprobando…');
   try{const r=await fetch('https://api.github.com/repos/'+cfg.repo,{headers:{Authorization:'Bearer '+cfg.token,Accept:'application/vnd.github+json'}});
    if(!r.ok)throw new Error(r.status===404?'repositorio o token incorrectos':'error '+r.status);
@@ -266,7 +266,10 @@ let up='';
 $('#file').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{sp(S,up,await shrink(f,up.includes('hero')?1600:1280));save();repaint();openDlg()}catch(err){toast(err.message)}});
 $('#files').addEventListener('change',async e=>{let n=0;for(const f of e.target.files){try{S.galeria.items.push(await shrink(f));n++}catch(_){}}if(n){save();repaint();openDlg();toast(n+' foto(s) añadida(s)')}});
 $('#gear').onclick=()=>{tab=isAdmin()?'inicio':'con';openDlg()};
-document.addEventListener('click',e=>{if(e.target.id==='ed'){tab='inicio';openDlg()}
+let tap=[];
+document.addEventListener('click',e=>{
+ if(e.target.matches('#foot img')){const n=Date.now();tap=tap.filter(x=>n-x<4000);tap.push(n);if(tap.length>=5){tap=[];sessionStorage.setItem('pt_gear','1');$('#gear').hidden=false;toast('Configuración activada')}}
+ if(e.target.id==='ed'){tab='inicio';openDlg()}
  if(e.target.matches('.grid img')){const l=$('#lb');l.querySelector('img').src=e.target.src;l.classList.add('open')}
  if(e.target.closest('#lb'))$('#lb').classList.remove('open')});
 $('#burger').onclick=()=>$('#nav').classList.toggle('open');
