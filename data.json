@@ -1,0 +1,97 @@
+{
+ "version": 1,
+ "updated": "",
+ "inicio": {
+  "hero": {
+   "image": "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_07.jpg",
+   "kicker": "Cafetería · menú del día",
+   "title": "Cafetería Portosín",
+   "button": "Ver la carta"
+  },
+  "nosotros": {
+   "title": "Un rincón para disfrutar de Portosín",
+   "text": "Cafetería para desayunar, comer y merendar en un ambiente cercano y tranquilo.\nCocina casera, producto fresco y un menú del día que cambia cada jornada.",
+   "image": "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Vert_02.jpg"
+  },
+  "carta": {
+   "title": "Carta",
+   "text": "Nuestra carta se basa en cocina casera con productos frescos. Consulta cada día el menú del día.",
+   "cards": [
+    {
+     "image": "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_16.jpg",
+     "title": "Comida casera"
+    },
+    {
+     "image": "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_22.jpg",
+     "title": "Desayunos y meriendas"
+    },
+    {
+     "image": "https://cafedelborn.com/wp-content/uploads/2020/08/Cafe_del_Born_Galeria_19.jpg",
+     "title": "Cafés y copas"
+    }
+   ],
+   "button": "Ver carta"
+  },
+  "strip": [
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Vert_03.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Vert_07.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Vert_05.jpg"
+  ],
+  "galeriaTitle": "Nuestra galería fotográfica"
+ },
+ "carta": {
+  "activo": true,
+  "showDate": true,
+  "title": "Menú Portosín",
+  "primeros": [
+   "Fabada asturiana",
+   "Ensalada de queso de cabra",
+   "Spaghetti a la boloñesa",
+   "Acelgas rehogadas"
+  ],
+  "segundos": [
+   "Huevos rotos con jamón",
+   "Entrecot con pimientos de Padrón",
+   "Lubina a la plancha",
+   "Croquetas de setas"
+  ],
+  "postres": "tartas de queso, chocolate, Santiago o brownie. Pudin, flan, arroz con leche, melón, piña o café",
+  "precio": "15,00 €",
+  "medio": "12,00 €",
+  "nota": "Pan y bebida incluidos."
+ },
+ "galeria": {
+  "items": [
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_25.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_07.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_15.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_20.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_19.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_04.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_08.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_17.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_24.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_12.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_18.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_01.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_23.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_22.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_05.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_02.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_10.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_03.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_Galeria_21.jpg",
+   "https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_TripAdv_06.jpg"
+  ]
+ },
+ "contacto": {
+  "titulo": "Contacto",
+  "texto": "Estaremos encantados de atenderte.",
+  "direccion": "Calle (por completar)\nPortosín, A Coruña",
+  "telefono": "000 00 00 00",
+  "email": "",
+  "horario": "Lunes a domingo\n(por completar)",
+  "facebook": "",
+  "instagram": ""
+ }
+}
