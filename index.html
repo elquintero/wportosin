@@ -228,8 +228,39 @@ async function push(){
 }
 /* ---------- Imágenes: se reducen y se guardan dentro del JSON (data URL) ---------- */
 function shrink(file,max=1280,q=.74){return new Promise((ok,ko)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',q))};im.onerror=()=>ko(new Error('imagen no válida'));im.src=u})}
+
+/* ---------- Imagen del menú (1080x1920) para estados de WhatsApp ---------- */
+async function menuImage(k){
+ const m=S.carta.menus[k];if(!m)return null;
+ try{await Promise.all([document.fonts.load('600 40px "Cormorant Garamond"'),document.fonts.load('500 40px "Cormorant Garamond"'),document.fonts.load('500 30px Jost')])}catch(e){}
+ const logo=await new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src='logo.png'});
+ const W=1080,H=1920,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+ const SER='"Cormorant Garamond",Georgia,serif',SAN='Jost,system-ui,sans-serif',BLUE='#2f5d9f',BD='#1f4278',cx=W/2,mw=780;
+ const wrap=(t,w)=>{const out=[];for(const para of String(t||'').split('\n')){let line='';for(const word of para.split(/\s+/).filter(Boolean)){const tt=line?line+' '+word:word;if(x.measureText(tt).width>w&&line){out.push(line);line=word}else line=tt}if(line)out.push(line)}return out};
+ const run=(K,Y,d)=>{let y=Y;
+  const txt=(t,w,sz,f,col,lh)=>{x.font=`${w} ${sz*K}px ${f}`;x.fillStyle=col;x.textAlign='center';x.textBaseline='middle';for(const l of wrap(t,mw)){const h=sz*K*lh;if(d)x.fillText(l,cx,y+h/2);y+=h}};
+  const hr=()=>{y+=24*K;if(d){x.fillStyle=BLUE;x.fillRect(cx-390,y,780,7*K)}y+=7*K+24*K};
+  const list=a=>{for(const t of a||[]){txt(t,500,46,SER,'#111',1.25);y+=12*K}};
+  if(logo){const h=120*K,w=logo.width*h/logo.height;if(d)x.drawImage(logo,cx-w/2,y,w,h);y+=h+22*K}
+  txt(String(S.carta.title||'').toUpperCase(),600,74,SER,BD,1.2);
+  txt(fmtLong(k),500,40,SER,'#5d6572',1.3);
+  hr();txt('Primer plato',500,56,SER,BLUE,1.3);y+=8*K;list(m.primeros);
+  hr();txt('Segundo plato',500,56,SER,BLUE,1.3);y+=8*K;list(m.segundos);
+  hr();txt('Postres',500,56,SER,BLUE,1.3);y+=6*K;txt(m.postres,500,40,SER,'#111',1.3);
+  y+=34*K;const rh=76*K;if(d){x.textBaseline='middle';x.fillStyle='#111';x.textAlign='left';x.font=`600 ${56*K}px ${SER}`;x.fillText('Menú: '+m.precio,cx-390,y+rh/2);x.textAlign='right';x.font=`500 ${40*K}px ${SER}`;x.fillText('Medio menú: '+m.medio,cx+390,y+rh/2)}y+=rh;
+  if(m.nota){y+=18*K;const h=84*K;if(d){x.fillStyle='#e8eef7';x.fillRect(cx-390,y,780,h);x.fillStyle=BD;x.textAlign='center';x.font=`500 ${38*K}px ${SAN}`;x.fillText(m.nota,cx,y+h/2)}y+=h}
+  return y-Y};
+ let K=1.2;while(K>0.5&&run(K,0,false)>1640)K-=0.04;
+ const tot=run(K,0,false);
+ x.fillStyle=BLUE;x.fillRect(0,0,W,H);
+ x.fillStyle='#fff';x.fillRect(50,50,W-100,H-100);
+ x.strokeStyle=BLUE;x.lineWidth=5;x.strokeRect(50,50,W-100,H-100);x.lineWidth=2;x.strokeRect(74,74,W-148,H-148);
+ run(K,50+(H-100-tot)/2,true);
+ return new Promise(r=>c.toBlob(r,'image/png'));
+}
 /* ---------- Panel de administración ---------- */
 let tab='inicio',selD=null,calY=null,calM=0,calOpen=false;
+const canShareImg=()=>{try{return !!(navigator.canShare&&navigator.canShare({files:[new File([''],'a.png',{type:'image/png'})]}))}catch(e){return false}};
 function calHtml(){const y=calY,m=calM,off=(new Date(Date.UTC(y,m,1)).getUTCDay()+6)%7,n=new Date(Date.UTC(y,m+1,0)).getUTCDate(),tk=todayKey(),M=S.carta.menus;let c='';
  for(let i=0;i<off;i++)c+='<i></i>';
  for(let d=1;d<=n;d++){const k=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');c+=`<button type="button" class="cd${k===selD?' sel':''}${k===tk?' tod':''}${M[k]?' has':''}" data-d="${k}">${d}</button>`}
@@ -250,7 +281,8 @@ function tabHtml(){
   ${m?F('Primeros platos',p+'primeros',{h:'Un plato por línea.'})+F('Segundos platos',p+'segundos',{h:'Un plato por línea.'})+F('Postres',p+'postres',{ta:1})+F('Precio menú',p+'precio')+F('Precio medio menú',p+'medio')+F('Nota inferior',p+'nota')+`<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="sm" data-go="carta">Ver la carta</button><button class="sm red" data-mk="del">Borrar este menú</button></div>`
    :`<p style="color:var(--mut)">Este día no tiene menú.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="sm" data-mk="copy">Crear copiando el último menú</button><button class="sm" data-mk="blank">Crear en blanco</button></div>`}
   <h4>Título de la carta</h4>${F('Título','carta.title')}
-  <div style="margin-top:14px"><button class="sm" data-mk="prune">Borrar menús de días pasados</button></div>`}
+  <div style="margin-top:14px"><button class="sm" data-mk="prune">Borrar menús de días pasados</button></div>
+  <h4>Imagen para WhatsApp</h4>${m?`<p style="margin:6px 0 10px;color:var(--mut);font-size:.9rem">Crea una imagen vertical (formato estado) con el menú del ${esc(fmtLong(selD))}.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="sm" data-mkimg="dl">Descargar imagen del menú</button>${canShareImg()?'<button class="sm" data-mkimg="share">Compartir…</button>':''}</div><div id="mprev" style="display:none;margin-top:12px"><img id="mimg" alt="Vista previa del menú" style="max-width:260px;width:100%;border:1px solid var(--line);border-radius:8px"></div>`:'<p style="color:var(--mut);font-size:.9rem">Crea primero el menú de este día para generar su imagen.</p>'}`}
  if(tab==='galeria')return `<div class="tip">Las fotos se reducen automáticamente y se guardan en el JSON.</div><button class="sm" id="addg">+ Añadir fotos</button><div class="gl">${S.galeria.items.map((s,n)=>`<div><img src="${esc(s)}" alt="" loading="lazy"><span><button data-g="l" data-i="${n}" aria-label="Mover antes">←</button><button data-g="d" data-i="${n}" aria-label="Quitar">✕</button><button data-g="r" data-i="${n}" aria-label="Mover después">→</button></span></div>`).join('')}</div>`;
  if(tab==='contacto'){const c='contacto.';return F('Título',c+'titulo')+F('Texto',c+'texto',{ta:1})+F('Dirección',c+'direccion',{ta:1})+F('Horario',c+'horario',{ta:1})+F('Teléfono',c+'telefono')+F('Email',c+'email')+F('Facebook (URL)',c+'facebook')+F('Instagram (URL)',c+'instagram')}
  const kb=Math.round(JSON.stringify(S).length/1024);
@@ -269,6 +301,12 @@ dlg.addEventListener('click',async e=>{const t=e.target;
  if(t.id==='x')return dlg.close();
  if(t.dataset.t){tab=t.dataset.t;openDlg();dlg.scrollTop=0;return}
  if(t.closest('[data-calt]')){calOpen=!calOpen;return openDlg()}
+ if(t.dataset.mkimg){const mode=t.dataset.mkimg;setSt('Creando imagen…');
+  try{const blob=await menuImage(selD);if(!blob)throw new Error('sin menú');const name='menu-portosin-'+selD+'.png',url=URL.createObjectURL(blob);
+   const pv=$('#mimg');if(pv){pv.src=url;$('#mprev').style.display='block'}
+   if(mode==='share'){const f=new File([blob],name,{type:'image/png'});try{await navigator.share({files:[f],title:'Menú Portosín'})}catch(err){if(err&&err.name!=='AbortError')throw err}}
+   else{const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();toast('Imagen descargada')}
+   setSt('')}catch(err){setSt('No se pudo crear la imagen',true)}return}
  if(t.dataset.d){selD=t.dataset.d;calOpen=false;const q=selD.split('-');calY=+q[0];calM=+q[1]-1;return openDlg()}
  if(t.dataset.cal){calM+=+t.dataset.cal;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}return openDlg()}
  if(t.dataset.mk){const k=t.dataset.mk,M=S.carta.menus,ks=Object.keys(M).sort();

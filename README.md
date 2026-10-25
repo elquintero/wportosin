@@ -15,6 +15,10 @@ Web responsive y PWA instalable. El contenido (textos, menú del día e imágene
 
 ⚙ → Carta: elige un día en el calendario (los días con menú llevan un punto) y escribe su menú: un plato por línea, postres, precios y nota. Cada menú se muestra solo en su día y cambia a las 00:01 (hora de España). Si el día de hoy no tiene menú, la web muestra «Hoy no hay menú». Puedes preparar menús con días de antelación y copiar el último con un botón. Se guarda solo (commit en `data.json`).
 
+## Imagen del menú para WhatsApp
+
+Al final de ⚙ → Carta, el botón «Descargar imagen del menú» genera un PNG vertical (1080×1920) del día seleccionado, listo para subirlo como estado de WhatsApp. En móviles que lo permitan aparece también «Compartir…».
+
 ## Imágenes
 
 Se reducen a máx. 1280 px (1600 la portada) en JPEG y se guardan dentro de `data.json` como data URL. Las imágenes de ejemplo son las de cafedelborn.com enlazadas por URL; al cambiarlas se sustituyen por las tuyas. Si el JSON crece mucho (varios MB), la carga se vuelve lenta: en ese caso conviene pasar a ficheros de imagen en el repositorio.
