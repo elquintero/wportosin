@@ -1,4 +1,4 @@
-const V='portosin-v1',SHELL=['./','index.html','manifest.webmanifest','config.json','data.json','logo.png','logo-white.png','icon-192.png','icon-512.png','apple-touch-icon.png'];
+const V='portosin-v1',SHELL=['./','index.html','manifest.webmanifest','config.json','data.json','logo.png','logo-white.png','icon-192.png','icon-512.png','apple-touch-icon.png','icon-maskable-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))));self.clients.claim()});
 // Red primero (siempre la versión más reciente) y caché como respaldo sin conexión
