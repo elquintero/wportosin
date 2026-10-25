@@ -102,6 +102,8 @@ dialog::backdrop{background:rgba(15,25,45,.55)}
 .imgf b{display:block;font-size:.88rem;margin-bottom:4px}
 .sm{border:1px solid var(--blue);color:var(--blue);background:#fff;border-radius:7px;padding:6px 12px;font:500 .85rem var(--sans);cursor:pointer}.sm:hover{background:var(--blue-l)}.sm.red{border-color:#b3261e;color:#b3261e}
 .gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin:12px 0}.gl div{border:1px solid var(--line);border-radius:8px;overflow:hidden}.gl img{width:100%;aspect-ratio:4/3;object-fit:cover}.gl span{display:flex;justify-content:space-between;padding:4px}.gl button{border:0;background:var(--blue-l);border-radius:6px;cursor:pointer;width:30px;height:28px;font-size:1rem}
+.db .lbl{font-size:.82rem;font-weight:500;color:var(--mut);margin:12px 0 4px}
+.dpick{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid #bfcbdd;border-radius:8px;padding:10px 12px;background:#fff;font:1rem var(--sans);color:var(--ink);cursor:pointer}.dpick svg{width:22px;height:22px;color:var(--blue)}.dpick[aria-expanded=true]{border-color:var(--blue)}
 .cal{border:1px solid var(--line);border-radius:10px;padding:10px;margin:10px 0;max-width:360px;background:#fff}
 .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.ch b{font-family:var(--serif);font-size:1.3rem;color:var(--blue-d);text-transform:capitalize}
 .cw,.cg{display:grid;grid-template-columns:repeat(7,1fr);text-align:center}.cw span{font-size:.75rem;font-weight:600;color:var(--mut);padding:4px 0}
@@ -227,7 +229,7 @@ async function push(){
 /* ---------- Imágenes: se reducen y se guardan dentro del JSON (data URL) ---------- */
 function shrink(file,max=1280,q=.74){return new Promise((ok,ko)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',q))};im.onerror=()=>ko(new Error('imagen no válida'));im.src=u})}
 /* ---------- Panel de administración ---------- */
-let tab='inicio',selD=null,calY=null,calM=0;
+let tab='inicio',selD=null,calY=null,calM=0,calOpen=false;
 function calHtml(){const y=calY,m=calM,off=(new Date(Date.UTC(y,m,1)).getUTCDay()+6)%7,n=new Date(Date.UTC(y,m+1,0)).getUTCDate(),tk=todayKey(),M=S.carta.menus;let c='';
  for(let i=0;i<off;i++)c+='<i></i>';
  for(let d=1;d<=n;d++){const k=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');c+=`<button type="button" class="cd${k===selD?' sel':''}${k===tk?' tod':''}${M[k]?' has':''}" data-d="${k}">${d}</button>`}
@@ -243,7 +245,7 @@ function tabHtml(){
  if(tab==='carta'){if(!selD)selD=todayKey();if(calY==null){const p=selD.split('-');calY=+p[0];calM=+p[1]-1}
   const M=S.carta.menus,m=M[selD],p='carta.menus.'+selD+'.';
   return `<div class="tip">Elige un día en el calendario y escribe su menú. Cada menú se publica solo ese día, a partir de las 00:01 (hora de España). Si un día no tiene menú, se muestra «Hoy no hay menú».</div>
-  <label>Fecha menú<input type="text" readonly value="${selD.split('-').reverse().join('/')}"></label>${calHtml()}
+  <div class="lbl">Fecha menú</div><button type="button" class="dpick" data-calt="1" aria-expanded="${calOpen}"><span>${selD.split('-').reverse().join('/')}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>${calOpen?calHtml():''}
   <h4>Menú del ${esc(fmtLong(selD))}</h4>
   ${m?F('Primeros platos',p+'primeros',{h:'Un plato por línea.'})+F('Segundos platos',p+'segundos',{h:'Un plato por línea.'})+F('Postres',p+'postres',{ta:1})+F('Precio menú',p+'precio')+F('Precio medio menú',p+'medio')+F('Nota inferior',p+'nota')+`<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="sm" data-go="carta">Ver la carta</button><button class="sm red" data-mk="del">Borrar este menú</button></div>`
    :`<p style="color:var(--mut)">Este día no tiene menú.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="sm" data-mk="copy">Crear copiando el último menú</button><button class="sm" data-mk="blank">Crear en blanco</button></div>`}
@@ -266,7 +268,8 @@ const dlg=$('#dlg');
 dlg.addEventListener('click',async e=>{const t=e.target;
  if(t.id==='x')return dlg.close();
  if(t.dataset.t){tab=t.dataset.t;openDlg();dlg.scrollTop=0;return}
- if(t.dataset.d){selD=t.dataset.d;const q=selD.split('-');calY=+q[0];calM=+q[1]-1;return openDlg()}
+ if(t.closest('[data-calt]')){calOpen=!calOpen;return openDlg()}
+ if(t.dataset.d){selD=t.dataset.d;calOpen=false;const q=selD.split('-');calY=+q[0];calM=+q[1]-1;return openDlg()}
  if(t.dataset.cal){calM+=+t.dataset.cal;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}return openDlg()}
  if(t.dataset.mk){const k=t.dataset.mk,M=S.carta.menus,ks=Object.keys(M).sort();
   if(k==='copy'||k==='blank'){const prev=ks.filter(x=>x<selD).pop()||ks.pop(),b=JSON.parse(JSON.stringify(prev?M[prev]:EX));M[selD]=k==='copy'?b:Object.assign(b,{primeros:[],segundos:[],postres:''})}
