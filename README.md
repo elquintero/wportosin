@@ -11,9 +11,9 @@ Web responsive y PWA instalable. El contenido (textos, menú del día e imágene
 3. **Token**: GitHub → Settings → Developer settings → Fine-grained tokens. *Only select repositories* → `portosin-data`, permiso **Contents: Read and write**, con caducidad (p. ej. 90 días).
 4. En la web pulsa ⚙ → pega el token → *Guardar y comprobar*. A partir de ahí, ⚙ abre Inicio, Carta, Galería, Contacto y Conexión. Repite en cada dispositivo desde el que quieras administrar.
 
-## Edición diaria del menú
+## Menú por fecha
 
-⚙ → Carta: un plato por línea, postres, precios, nota y casillas de publicar/mostrar fecha. Se guarda solo (commit en `data.json`).
+⚙ → Carta: elige un día en el calendario (los días con menú llevan un punto) y escribe su menú: un plato por línea, postres, precios y nota. Cada menú se muestra solo en su día y cambia a las 00:01 (hora de España). Si el día de hoy no tiene menú, la web muestra «Hoy no hay menú». Puedes preparar menús con días de antelación y copiar el último con un botón. Se guarda solo (commit en `data.json`).
 
 ## Imágenes
 
