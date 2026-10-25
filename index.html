@@ -135,6 +135,7 @@ dialog::backdrop{background:rgba(15,25,45,.55)}
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const para=t=>String(t||'').split(/\n+/).filter(x=>x.trim()).map(x=>`<p>${esc(x)}</p>`).join('');
 const B='https://cafedelborn.com/wp-content/uploads/2020/01/Cafe_del_Born_';
+const APP_VERSION='1.0.0';
 const mkey=t=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(t);
 const todayKey=()=>mkey(Date.now()-60000); // el día cambia a las 00:01 (hora de España)
 const fmtLong=k=>{const d=new Date(k+'T12:00:00Z').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});return d.charAt(0).toUpperCase()+d.slice(1)};
@@ -173,7 +174,7 @@ function pHome(){const i=S.inicio,h=i.hero;
  ${pContactBlock()}`}
 function pCarta(){const c=S.carta,k=todayKey(),m=c.menus&&c.menus[k];
  const head=`<div class="page-h"><h1>Carta</h1></div>`;
- if(!m)return head+`<p class="empty">Hoy no hay menú</p>`;
+ if(!m)return head+`<p class="empty">Hoy no hay menú del día publicado.<br>Consúltanos en el local o por teléfono.</p>`;
  const L=a=>`<ul>${(a||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
  return head+`<article class="menu-card"><h2>${esc(c.title)}</h2><div class="date">${esc(fmtLong(k))}</div><hr><h3>Primer plato</h3>${L(m.primeros)}<hr><h3>Segundo plato</h3>${L(m.segundos)}<hr><p class="post"><b>Postres:</b> ${esc(m.postres)}</p><div class="price"><span><b>Menú: ${esc(m.precio)}</b></span><span>Medio menú: ${esc(m.medio)}</span></div>${m.nota?`<div class="note">${esc(m.nota)}</div>`:''}</article>`}
 function pGal(){return `<div class="page-h"><h1>Galería</h1></div><section class="blk"><div class="wrap"><div class="grid">${imgs(S.galeria.items)}</div></div></section>`}
@@ -290,7 +291,8 @@ function tabHtml(){
  <label>Repositorio de datos (usuario/repositorio)<input type="text" id="c-r" value="${esc(repo())}"></label>
  <label>Token fine-grained (Contents: lectura y escritura)<input type="password" id="c-t" value="${esc(cfg.token||'')}" autocomplete="off"></label>
  <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><button class="sm" id="c-ok">Guardar y comprobar</button>${cfg.token?'<button class="sm red" id="c-out">Cerrar sesión de administrador</button>':''}</div>
- <small>Tamaño actual del JSON: ${kb>1024?(kb/1024).toFixed(1)+' MB':kb+' KB'} ${isAdmin()?'':'· aún sin acceso de administrador'}</small>`;
+ <small>Tamaño actual del JSON: ${kb>1024?(kb/1024).toFixed(1)+' MB':kb+' KB'} ${isAdmin()?'':'· aún sin acceso de administrador'}</small>
+ <div style="text-align:right;margin-top:28px;font-size:.8rem;color:var(--mut)">Versión ${APP_VERSION}</div>`;
 }
 function openDlg(){const d=$('#dlg'),adm=isAdmin(),sc=d.scrollTop;if(!adm)tab='con';
  const T=adm?[['inicio','Inicio'],['carta','Carta'],['galeria','Galería'],['contacto','Contacto'],['con','Conexión']]:[['con','Acceso']];
